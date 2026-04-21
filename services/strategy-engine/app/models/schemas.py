@@ -1,6 +1,6 @@
 """PRD 卷三 §3.1 + 卷五实体的 Pydantic 模型"""
 from datetime import datetime
-from typing import Any, Literal, Optional
+from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
@@ -8,20 +8,20 @@ from pydantic import BaseModel, Field
 # ================== 画像 ==================
 class StudentProfile(BaseModel):
     student_id: str
-    age: Optional[int] = None
-    grade: Optional[int] = None
-    avg_interactions_per_class: Optional[float] = None
-    speak_ratio: Optional[float] = None
-    correct_rate: Optional[float] = None
-    avg_answer_latency_ms: Optional[float] = None
-    asr_success_rate: Optional[float] = None
-    confused_ratio: Optional[float] = None
-    focus_ratio: Optional[float] = None
-    barge_in_per_min: Optional[float] = None
+    age: int | None = None
+    grade: int | None = None
+    avg_interactions_per_class: float | None = None
+    speak_ratio: float | None = None
+    correct_rate: float | None = None
+    avg_answer_latency_ms: float | None = None
+    asr_success_rate: float | None = None
+    confused_ratio: float | None = None
+    focus_ratio: float | None = None
+    barge_in_per_min: float | None = None
     happy_triggers: list[str] = Field(default_factory=list)
     knowledge_mastery: dict[str, float] = Field(default_factory=dict)
     recent_classes_count: int = 0
-    updated_at: Optional[datetime] = None
+    updated_at: datetime | None = None
 
     def is_cold_start(self) -> bool:
         """近 5 节课不足 → 冷启动,走 default_profile"""
@@ -30,28 +30,28 @@ class StudentProfile(BaseModel):
 
 class ClassProfile(BaseModel):
     class_id: str
-    profile_variance: Optional[float] = None
-    avg_focus: Optional[float] = None
-    low_participation_ratio: Optional[float] = None
+    profile_variance: float | None = None
+    avg_focus: float | None = None
+    low_participation_ratio: float | None = None
 
 
 # ================== 策略旋钮 ==================
 class StrategyKnobs(BaseModel):
-    K1_difficulty: Optional[Literal["easy", "balanced", "challenge"]] = None
-    K2_density: Optional[float] = None
-    K3_tts_speed: Optional[float] = None
-    K4_call_strategy: Optional[Literal["balanced", "compensate", "proactive"]] = None
-    K4_call_weight: Optional[float] = None
-    K5_reward_rhythm: Optional[Literal["per_3_questions", "per_5_questions", "by_performance"]] = None
-    K6_barge_in_policy: Optional[Literal["conservative", "default", "open"]] = None
-    K7_board_density: Optional[Literal["sparse", "medium", "dense"]] = None
-    K8_emotion_response: Optional[Literal["passive", "proactive"]] = None
-    K9_reward_weight: Optional[dict[str, float]] = None
-    K10_question_type: Optional[dict[str, float]] = None
+    K1_difficulty: Literal["easy", "balanced", "challenge"] | None = None
+    K2_density: float | None = None
+    K3_tts_speed: float | None = None
+    K4_call_strategy: Literal["balanced", "compensate", "proactive"] | None = None
+    K4_call_weight: float | None = None
+    K5_reward_rhythm: Literal["per_3_questions", "per_5_questions", "by_performance"] | None = None
+    K6_barge_in_policy: Literal["conservative", "default", "open"] | None = None
+    K7_board_density: Literal["sparse", "medium", "dense"] | None = None
+    K8_emotion_response: Literal["passive", "proactive"] | None = None
+    K9_reward_weight: dict[str, float] | None = None
+    K10_question_type: dict[str, float] | None = None
 
     # 额外 Barge-in 控制参数(R_FREQUENT_BARGE_IN)
-    vad_threshold_dbfs: Optional[float] = None
-    min_speech_ms: Optional[int] = None
+    vad_threshold_dbfs: float | None = None
+    min_speech_ms: int | None = None
 
 
 class StudentStrategy(BaseModel):
@@ -73,20 +73,20 @@ class StrategyConfig(BaseModel):
 # ================== 规则 ==================
 class RuleCondition(BaseModel):
     """简单 DSL 条件 · 单条或 all/any 聚合"""
-    metric: Optional[str] = None
-    op: Optional[Literal["<", "<=", "==", ">=", ">", "!="]] = None
-    value: Optional[Any] = None
-    all: Optional[list["RuleCondition"]] = None
-    any: Optional[list["RuleCondition"]] = None
+    metric: str | None = None
+    op: Literal["<", "<=", "==", ">=", ">", "!="] | None = None
+    value: Any | None = None
+    all: list["RuleCondition"] | None = None
+    any: list["RuleCondition"] | None = None
 
 
 RuleCondition.model_rebuild()
 
 
 class RuleSafety(BaseModel):
-    recovery_when: Optional[RuleCondition] = None
-    max_consecutive_classes: Optional[int] = None
-    cap: Optional[dict[str, Any]] = None
+    recovery_when: RuleCondition | None = None
+    max_consecutive_classes: int | None = None
+    cap: dict[str, Any] | None = None
 
 
 class Rule(BaseModel):
@@ -97,4 +97,4 @@ class Rule(BaseModel):
     when: RuleCondition
     then: dict[str, Any] = Field(default_factory=dict)
     rationale: str = ""
-    safety: Optional[RuleSafety] = None
+    safety: RuleSafety | None = None

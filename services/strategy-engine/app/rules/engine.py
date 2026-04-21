@@ -5,7 +5,6 @@ import structlog
 
 from app.models import (
     ClassProfile,
-    Rule,
     StrategyConfig,
     StrategyKnobs,
     StudentProfile,
