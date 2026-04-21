@@ -1,0 +1,9 @@
+spring:
+  profiles:
+    active: dev
+
+# dev 环境默认配置(覆盖 application.yml)
+logging:
+  level:
+    com.wandou.orchestrator: TRACE
+    org.springframework.web: DEBUG

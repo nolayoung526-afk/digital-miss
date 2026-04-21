@@ -1,0 +1,17 @@
+!!com.wandou.fallback.domain.Playbook
+playbookId: FP-09
+trigger: assistant_offline
+severity: mid
+dtScript:
+  - sceneId: fp09_sc1
+    type: praise
+    ttsText: "小助手今天有点害羞躲起来啦~ 没关系,豆豆老师陪着大家,我们继续今天的小冒险!"
+    emotion: cheerful
+    gesture: thumbs_up
+systemAction:
+  - dispatch_fallback_assistant_pool
+  - alert_class_manager
+maxDurationSec: 30
+escalateTo: abort
+version: "1.0"
+auditStatus: approved

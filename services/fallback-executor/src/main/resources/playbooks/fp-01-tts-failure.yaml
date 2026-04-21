@@ -1,0 +1,21 @@
+!!com.wandou.fallback.domain.Playbook
+playbookId: FP-01
+trigger: tts_primary_failure
+severity: high
+dtScript:
+  - sceneId: fp01_sc1
+    type: praise
+    ttsText: "小朋友们稍等一下下哦~ 豆豆老师喝口水润润嗓子,马上就回来,你们先看看屏幕上的题目,想一想答案是什么呀?"
+    emotion: cheerful
+    gesture: drink_water
+    personaVariants:
+      wang_humor: "等豆豆一下下~ 老师刚才讲得太激动,嗓子罢工三秒钟!"
+      li_gentle: "小朋友们,稍等一小会儿哦,老师润润嗓子,马上回来陪你们。"
+systemAction:
+  - switch_tts_channel_backup
+  - alert_assistant_silent
+  - highlight_current_question
+maxDurationSec: 10
+escalateTo: assistant
+version: "1.0"
+auditStatus: approved

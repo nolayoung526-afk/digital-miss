@@ -1,0 +1,58 @@
+spring:
+  application:
+    name: fallback-executor
+  profiles:
+    active: "@spring.profiles.active@"
+  jackson:
+    time-zone: Asia/Shanghai
+    default-property-inclusion: non_null
+
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+
+  kafka:
+    bootstrap-servers: ${KAFKA_BROKERS:localhost:9092}
+    consumer:
+      group-id: fallback-executor-v1
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      auto-offset-reset: latest
+      enable-auto-commit: false
+      properties:
+        spring.json.trusted.packages: "*"
+        session.timeout.ms: 10000
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      acks: "1"
+      retries: 3
+
+server:
+  port: 8082
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+
+springdoc:
+  api-docs:
+    path: /api/v1/docs
+  swagger-ui:
+    path: /swagger-ui.html
+
+app:
+  playbook:
+    path: classpath:playbooks/*.yaml
+  fallback:
+    max-concurrent-per-class: 1
+    escalation-timeout-buffer-ms: 2000
+    takeover-wait-seconds: 30
+
+logging:
+  level:
+    root: INFO
+    com.wandou.fallback: DEBUG

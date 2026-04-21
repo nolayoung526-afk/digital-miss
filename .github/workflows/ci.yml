@@ -1,0 +1,168 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+# 并发控制 · 同一 PR 只跑最新
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+
+  # ============ 检测改动路径 ============
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      frontend: ${{ steps.filter.outputs.frontend }}
+      java: ${{ steps.filter.outputs.java }}
+      python: ${{ steps.filter.outputs.python }}
+      flink: ${{ steps.filter.outputs.flink }}
+      infra: ${{ steps.filter.outputs.infra }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            frontend:
+              - 'apps/**'
+              - 'packages/**'
+              - 'package.json'
+              - 'pnpm-workspace.yaml'
+            java:
+              - 'services/class-orchestrator/**'
+              - 'services/fallback-executor/**'
+            python:
+              - 'services/strategy-engine/**'
+              - 'services/digital-teacher-render/**'
+            flink:
+              - 'services/data-pipeline/flink/**'
+            infra:
+              - 'infra/**'
+              - 'docker-compose.yml'
+
+  # ============ 前端(React / TS)============
+  frontend:
+    needs: changes
+    if: needs.changes.outputs.frontend == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        target: [barge-in-poc, student-classroom, teacher-console]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter ${{ matrix.target }} typecheck
+      - run: pnpm --filter ${{ matrix.target }} build
+
+  # ============ Java 服务 ============
+  java:
+    needs: changes
+    if: needs.changes.outputs.java == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [class-orchestrator, fallback-executor]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: maven
+      - name: Compile
+        working-directory: services/${{ matrix.service }}
+        run: mvn -B clean compile
+      - name: Test
+        working-directory: services/${{ matrix.service }}
+        run: mvn -B test
+      - name: Package
+        working-directory: services/${{ matrix.service }}
+        run: mvn -B package -DskipTests
+
+  # ============ Python 服务 ============
+  python:
+    needs: changes
+    if: needs.changes.outputs.python == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [strategy-engine, digital-teacher-render]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+      - name: Install
+        working-directory: services/${{ matrix.service }}
+        run: |
+          pip install -e ".[dev]"
+      - name: Lint
+        working-directory: services/${{ matrix.service }}
+        run: ruff check app
+      - name: Test
+        working-directory: services/${{ matrix.service }}
+        run: pytest -v --tb=short
+
+  # ============ Flink Job ============
+  flink:
+    needs: changes
+    if: needs.changes.outputs.flink == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 11
+          cache: maven
+      - name: Build Flink Job
+        working-directory: services/data-pipeline/flink
+        run: mvn -B clean package -DskipTests
+
+  # ============ 基础设施 Lint ============
+  infra:
+    needs: changes
+    if: needs.changes.outputs.infra == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: SQL Lint
+        uses: sqlfluff/sqlfluff-github-actions@main
+        with:
+          paths: infra/mysql
+          dialect: mysql
+        continue-on-error: true
+      - name: Compose Validate
+        run: docker compose -f docker-compose.yml config -q
+
+  # ============ PR 收尾 ============
+  all-checks:
+    needs: [frontend, java, python, flink, infra]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify no failures
+        run: |
+          fail=0
+          for r in "${{ needs.frontend.result }}" "${{ needs.java.result }}" \
+                   "${{ needs.python.result }}"   "${{ needs.flink.result }}"  \
+                   "${{ needs.infra.result }}"; do
+            case "$r" in
+              success|skipped) ;;
+              *) echo "failed: $r"; fail=1 ;;
+            esac
+          done
+          exit $fail

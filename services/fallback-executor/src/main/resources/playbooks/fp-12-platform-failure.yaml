@@ -1,0 +1,19 @@
+!!com.wandou.fallback.domain.Playbook
+playbookId: FP-12
+trigger: platform_failure
+severity: high
+dtScript:
+  - sceneId: fp12_sc1
+    type: praise
+    ttsText: "小朋友们,今天豆豆老师的小魔法出了一点点小状况,我们先暂停 5 分钟,等魔法修好啦再继续好不好?小助手已经告诉爸爸妈妈啦!"
+    emotion: gentle
+    gesture: scratch_head_bow
+systemAction:
+  - set_class_status_aborted
+  - issue_compensation_coupon
+  - notify_parents_sms
+  - update_status_page
+maxDurationSec: 300
+escalateTo: abort
+version: "1.0"
+auditStatus: approved

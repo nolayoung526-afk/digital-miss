@@ -1,0 +1,132 @@
+# ============================================================
+# 豌豆思维数字人 · 策略规则 MVP v1.0
+# 对齐 PRD 卷五 §5.3 + 交付物 1(6 条 MVP 规则)
+# 生效需经 教研 → 学科主管 → 合规 三级审核
+# ============================================================
+meta:
+  package_id: strategy_mvp_v1
+  version: "1.0.0"
+  author: 教研团队
+  reviewers: ["subject_leader", "compliance"]
+  effective_from: "2026-06-01"
+  rollout_percentage: 5
+
+rules:
+  # ─────────────── 低参与学员补偿 ───────────────
+  - id: R_LOW_PARTICIPATION
+    name: 低参与学员补偿
+    priority: 10
+    scope: student
+    when:
+      all:
+        - metric: student.avg_interactions_per_class
+          op: "<"
+          value: 6
+        - metric: student.recent_classes_count
+          op: ">="
+          value: 3
+    then:
+      K4_call_strategy: compensate
+      K4_call_weight: 1.5
+      reward_weight:
+        star: 0.3
+        red_packet: 0.5
+        clap: 0.2
+    rationale: 低参与学员倾向被动 · 需主动点名并强化激励触达(红包刺激有效)
+    safety:
+      recovery_when:
+        metric: student.avg_interactions_per_class
+        op: ">="
+        value: 12
+      max_consecutive_classes: 5
+
+  # ─────────────── 困惑学员辅助 ───────────────
+  - id: R_CONFUSED_HOTSPOT
+    name: 困惑学员辅助
+    priority: 20
+    scope: student
+    when:
+      metric: student.confused_ratio
+      op: ">"
+      value: 0.25
+    then:
+      K3_tts_speed: 0.92
+      K7_board_density: dense
+      K8_emotion_response: proactive
+      K1_difficulty: easy
+    rationale: 困惑占比高 · 放慢讲解 + 增加板书视觉锚点 + 主动澄清
+    safety:
+      recovery_when:
+        metric: student.confused_ratio
+        op: "<"
+        value: 0.15
+
+  # ─────────────── 高能学员挑战 ───────────────
+  - id: R_HIGH_PERFORMER
+    name: 高能学员挑战
+    priority: 20
+    scope: student
+    when:
+      all:
+        - metric: student.correct_rate
+          op: ">"
+          value: 0.9
+        - metric: student.avg_answer_latency_ms
+          op: "<"
+          value: 1500
+    then:
+      K1_difficulty: challenge
+      question_type:
+        answer_device: 0.6
+        voice: 0.3
+        choice: 0.1
+    rationale: 避免高能学员因题目过易走神 · 采用挑战题维持投入
+
+  # ─────────────── ASR 不友好学员降级 ───────────────
+  - id: R_ASR_UNFRIENDLY
+    name: ASR 不友好学员降级
+    priority: 30
+    scope: student
+    when:
+      any:
+        - metric: student.asr_success_rate
+          op: "<"
+          value: 0.7
+        - metric: student.age
+          op: "<"
+          value: 6
+    then:
+      question_type:
+        choice: 0.7
+        answer_device: 0.3
+        voice: 0.0
+    rationale: 低龄或 ASR 识别差的学员 · 避免口答题 · 多用点选/答题器
+
+  # ─────────────── 班级高方差节奏收紧 ───────────────
+  - id: R_CLASS_SCATTERED
+    name: 高方差班级节奏收紧
+    priority: 40
+    scope: class
+    when:
+      metric: class.profile_variance
+      op: ">"
+      value: 0.35
+    then:
+      K2_density: 1.2
+      K5_reward_rhythm: per_3_questions
+    rationale: 班内学员差异大 · 需高节奏 + 高频激励统一班级体感
+
+  # ─────────────── 频繁打断学员规约 ───────────────
+  - id: R_FREQUENT_BARGE_IN
+    name: 频繁打断学员规约
+    priority: 30
+    scope: student
+    when:
+      metric: student.barge_in_per_min
+      op: ">"
+      value: 1.5
+    then:
+      K6_barge_in_policy: conservative
+      vad_threshold_dbfs: -38
+      min_speech_ms: 500
+    rationale: 过度打断影响课堂秩序 · 通过参数 + 脚本软引导双管齐下

@@ -1,0 +1,17 @@
+!!com.wandou.fallback.domain.Playbook
+playbookId: FP-05
+trigger: multi_speak
+severity: mid
+dtScript:
+  - sceneId: fp05_sc1
+    type: praise
+    ttsText: "哇,大家都想说!豆豆老师来做小裁判——我们按举手顺序来,第一个举手的 {{first_student}},你先来说好不好?"
+    emotion: playful
+    gesture: wave_flag
+systemAction:
+  - sfu_limit_mic_to_one
+  - show_queue_badge
+maxDurationSec: 300
+escalateTo: assistant
+version: "1.0"
+auditStatus: approved

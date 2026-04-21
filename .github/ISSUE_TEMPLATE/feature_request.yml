@@ -1,0 +1,22 @@
+name: 功能申请
+description: 提出新功能或改进建议
+labels: [enhancement, triage]
+body:
+  - type: textarea
+    attributes:
+      label: 问题背景
+      description: 现状有什么痛点?
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: 期望
+      description: 希望怎么解决?
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: 备选方案
+      description: 还有哪些可行路径?

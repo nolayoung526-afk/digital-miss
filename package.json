@@ -1,0 +1,25 @@
+{
+  "name": "digital-teacher",
+  "version": "0.1.0",
+  "private": true,
+  "description": "豌豆思维数字人老师小班直播产品 · MVP",
+  "packageManager": "pnpm@9.0.0",
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
+  },
+  "scripts": {
+    "dev": "pnpm -r --parallel run dev",
+    "build": "pnpm -r run build",
+    "test": "pnpm -r run test",
+    "lint": "pnpm -r run lint",
+    "typecheck": "pnpm -r run typecheck",
+    "clean": "pnpm -r exec rm -rf dist node_modules"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.0",
+    "@types/node": "^22.0.0",
+    "prettier": "^3.3.0",
+    "eslint": "^9.10.0"
+  }
+}

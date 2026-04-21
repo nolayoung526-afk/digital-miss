@@ -1,0 +1,40 @@
+# CODEOWNERS · 自动指派 Reviewer
+# 详见:https://docs.github.com/en/repositories/managing-your-repositories-settings-and-features/customizing-your-repository/about-code-owners
+
+# 仓库兜底
+*                                       @wandou/digital-teacher-leads
+
+# ---------- 前端 ----------
+/apps/teacher-console/                  @wandou/frontend-team @wandou/teaching-research
+/apps/student-classroom/                @wandou/frontend-team
+/apps/assistant-console/                @wandou/frontend-team
+/apps/monitor-wall/                     @wandou/frontend-team
+/apps/parent-app/                       @wandou/frontend-team @wandou/mobile-team
+/apps/barge-in-poc/                     @wandou/frontend-team @wandou/algorithm-team
+/packages/shared-types/                 @wandou/frontend-team @wandou/backend-team
+/packages/board-engine/                 @wandou/frontend-team @wandou/algorithm-team
+/packages/rtc-sdk/                      @wandou/frontend-team @wandou/algorithm-team
+
+# ---------- Java 后端 ----------
+/services/class-orchestrator/           @wandou/backend-team
+/services/fallback-executor/            @wandou/backend-team @wandou/teaching-research
+
+# ---------- Python 算法 ----------
+/services/strategy-engine/              @wandou/algorithm-team @wandou/data-team
+/services/digital-teacher-render/       @wandou/algorithm-team
+/services/strategy-engine/rules/        @wandou/teaching-research @wandou/compliance
+
+# ---------- 数据 ----------
+/services/data-pipeline/                @wandou/data-team
+
+# ---------- 基础设施 ----------
+/infra/                                 @wandou/infra-team @wandou/backend-team
+/infra/mysql/                           @wandou/infra-team @wandou/dba
+/docker-compose.yml                     @wandou/infra-team
+
+# ---------- CI / 规范 ----------
+/.github/                               @wandou/infra-team @wandou/digital-teacher-leads
+
+# ---------- 合规 · 授权相关必过法务 ----------
+/services/fallback-executor/src/main/resources/playbooks/  @wandou/teaching-research @wandou/compliance
+/services/strategy-engine/rules/                           @wandou/teaching-research @wandou/compliance

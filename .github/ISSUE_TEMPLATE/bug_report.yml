@@ -1,0 +1,54 @@
+name: Bug 报告
+description: 报告一个可复现的缺陷
+labels: [bug, triage]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢反馈!请尽量详细提供信息,有助于我们定位问题。
+
+  - type: textarea
+    attributes:
+      label: 现象
+      description: 发生了什么?期望是什么?
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: 复现步骤
+      value: |
+        1.
+        2.
+        3.
+    validations:
+      required: true
+
+  - type: dropdown
+    attributes:
+      label: 受影响模块
+      multiple: true
+      options:
+        - 学员课堂 (student-classroom)
+        - 教研后台 (teacher-console)
+        - 助教工作台 (assistant-console)
+        - 监课台 (monitor-wall)
+        - 课堂编排 (class-orchestrator)
+        - FP 预案执行 (fallback-executor)
+        - 策略引擎 (strategy-engine)
+        - 数字人渲染 (digital-teacher-render)
+        - 数据管道 (data-pipeline)
+        - 基础设施 / 部署
+
+  - type: dropdown
+    attributes:
+      label: 严重级别
+      options:
+        - P0 - 阻塞课堂 / 数据丢失 / 合规风险
+        - P1 - 核心流程受损
+        - P2 - 非核心功能异常
+        - P3 - 体验优化
+
+  - type: textarea
+    attributes:
+      label: 环境 · 日志 · 截图
