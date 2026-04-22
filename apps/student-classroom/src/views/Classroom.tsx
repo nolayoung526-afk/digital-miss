@@ -1,15 +1,65 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import DigitalTeacherView from '@/components/DigitalTeacherView';
 import StudentGrid from '@/components/StudentGrid';
 import BoardArea from '@/components/BoardArea';
 import AnswerPanel from '@/components/AnswerPanel';
 import BottomBar from '@/components/BottomBar';
 import { useClassroomStore } from '@/store/classroom';
+import type { RemoteMedia } from '@/lib/agora';
+
+type RtcStatus = 'idle' | 'joining' | 'connected' | 'error' | 'mock';
 
 export default function Classroom() {
   const { stars, setSubtitle, setBoardText, setDTState, callOn, clearCall } = useClassroomStore();
+  const [rtcStatus, setRtcStatus] = useState<RtcStatus>('idle');
+  const [rtcError, setRtcError] = useState<string>('');
+  const [remotes, setRemotes] = useState<RemoteMedia[]>([]);
+
+  // 真实 RTC 连接 · 只在 AppID + Token 都配齐时触发
+  // 动态 import 避免 Agora SDK 在 SSR 时访问 window
+  useEffect(() => {
+    const appId = process.env.NEXT_PUBLIC_AGORA_APP_ID;
+    const token = process.env.NEXT_PUBLIC_AGORA_TEMP_TOKEN;
+    const channel = process.env.NEXT_PUBLIC_AGORA_CHANNEL || 'demo_classroom';
+    if (!appId || !token) {
+      setRtcStatus('mock');
+      return;
+    }
+    setRtcStatus('joining');
+    let cleanup: (() => void) | undefined;
+    let cancelled = false;
+    (async () => {
+      try {
+        const { getAgoraClient } = await import('@/lib/agora');
+        if (cancelled) return;
+        const client = getAgoraClient();
+        const off = client.onRemoteChange(setRemotes);
+        const uid = `stu_${Math.floor(Math.random() * 10000)}`;
+        await client.join({ appId, token, channel, uid, role: 'host' });
+        if (cancelled) {
+          off();
+          await client.leave().catch(() => undefined);
+          return;
+        }
+        setRtcStatus('connected');
+        cleanup = () => {
+          off();
+          client.leave().catch(() => undefined);
+        };
+      } catch (e) {
+        if (cancelled) return;
+        setRtcStatus('error');
+        setRtcError((e as Error).message);
+        console.error('[Agora] join failed', e);
+      }
+    })();
+    return () => {
+      cancelled = true;
+      cleanup?.();
+    };
+  }, []);
 
   // Demo:模拟一次完整的分镜 · 便于第一次启动看到效果
   // 真实场景:订阅后端 SSE/WS 获取脚本进度 + 声网远端媒体
@@ -48,6 +98,28 @@ export default function Classroom() {
           </div>
         </div>
         <div className="flex items-center gap-4 text-xs">
+          <div
+            className={`px-2 py-0.5 rounded-full font-semibold ${
+              rtcStatus === 'connected'
+                ? 'bg-emerald-500/20 text-emerald-300'
+                : rtcStatus === 'joining'
+                  ? 'bg-amber-500/20 text-amber-300 animate-pulse'
+                  : rtcStatus === 'error'
+                    ? 'bg-red-500/20 text-red-300'
+                    : 'bg-slate-700 text-slate-400'
+            }`}
+            title={rtcError || rtcStatus}
+          >
+            RTC · {rtcStatus === 'connected'
+              ? `已入频道 · 远端 ${remotes.length}`
+              : rtcStatus === 'joining'
+                ? '入频道中...'
+                : rtcStatus === 'error'
+                  ? `失败:${rtcError.slice(0, 40)}`
+                  : rtcStatus === 'mock'
+                    ? 'Mock 模式'
+                    : '待连'}
+          </div>
           <div className="flex items-center gap-1.5">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
             <span className="text-slate-300">网络良好 · 98ms</span>
