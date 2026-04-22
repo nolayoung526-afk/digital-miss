@@ -1,7 +1,9 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  reactStrictMode: true,
+  // 关闭 strict mode · 避免 useEffect 双跑导致 Agora 单例 join 冲突
+  // 生产构建不受影响 · 如需排查 deprecation 再开
+  reactStrictMode: false,
   // 后端代理 · 对接 class-orchestrator
   async rewrites() {
     return [
