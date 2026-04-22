@@ -4,7 +4,6 @@ from typing import Any
 
 from app.models import Rule, RuleCondition, StudentProfile
 
-
 OP_TABLE = {
     "<":  operator.lt,
     "<=": operator.le,
@@ -25,10 +24,7 @@ def get_metric(profile: StudentProfile | Any, path: str) -> Any:
     for p in parts:
         if obj is None:
             return None
-        if isinstance(obj, dict):
-            obj = obj.get(p)
-        else:
-            obj = getattr(obj, p, None)
+        obj = obj.get(p) if isinstance(obj, dict) else getattr(obj, p, None)
     return obj
 
 

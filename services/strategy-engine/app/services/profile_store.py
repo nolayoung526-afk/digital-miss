@@ -1,8 +1,6 @@
 """画像存储 · MVP Redis 简单版 · GA 对接 Hologres"""
 from __future__ import annotations
 
-import json
-
 import redis.asyncio as redis
 import structlog
 

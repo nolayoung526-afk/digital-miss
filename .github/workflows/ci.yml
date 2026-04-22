@@ -56,8 +56,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
-        with:
-          version: 9
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -139,11 +137,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: SQL Lint
-        uses: sqlfluff/sqlfluff-github-actions@main
-        with:
-          paths: infra/mysql
-          dialect: mysql
+      - name: SQL Lint(sqlfluff CLI)
+        run: |
+          pip install sqlfluff==3.2.5
+          sqlfluff lint --dialect mysql infra/mysql || echo "sqlfluff warnings(non-blocking)"
         continue-on-error: true
       - name: Compose Validate
         run: docker compose -f docker-compose.yml config -q

@@ -1,8 +1,6 @@
 """渲染主流水线 · 编排 TTS + 唇形 + 板书 + 推流"""
 from __future__ import annotations
 
-import asyncio
-
 import numpy as np
 import structlog
 
