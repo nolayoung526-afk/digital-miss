@@ -28,6 +28,12 @@ CREATE TABLE IF NOT EXISTS `teacher_personas` (
   `status`              VARCHAR(16) NOT NULL DEFAULT 'collecting'
                         COMMENT 'collecting/modeling/reviewing/approved/suspended/revoked',
   `style_preset`        VARCHAR(16) NOT NULL DEFAULT 'cartoon_2d',
+  `render_vendor`       VARCHAR(16) NOT NULL DEFAULT 'mock'
+                        COMMENT 'mock/tencent_yinsu/heygen · 形象渲染厂商',
+  `vendor_avatar_id`    VARCHAR(128) NULL COMMENT '渲染厂商返回的 avatar_id',
+  `tts_vendor`          VARCHAR(16) NOT NULL DEFAULT 'mock'
+                        COMMENT 'mock/minimax/tencent_tts/elevenlabs',
+  `vendor_voice_id`     VARCHAR(128) NULL COMMENT 'TTS 厂商返回的 voice_id',
   `created_at`          TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at`          TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `deleted_at`          TIMESTAMP NULL,

@@ -1,0 +1,58 @@
+# ============================================================
+# teacher-asset-mgr 应用配置
+# ============================================================
+spring:
+  application:
+    name: teacher-asset-mgr
+  jackson:
+    time-zone: Asia/Shanghai
+    default-property-inclusion: non_null
+    date-format: yyyy-MM-dd'T'HH:mm:ss.SSSXXX
+
+  # MySQL(生产)· 测试走 H2 in-memory
+  datasource:
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/${MYSQL_DB:digital_teacher}?useSSL=false&serverTimezone=Asia/Shanghai&characterEncoding=utf8mb4&allowPublicKeyRetrieval=true
+    username: ${MYSQL_USER:root}
+    password: ${MYSQL_PASSWORD:}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+
+server:
+  port: ${SERVER_PORT:8082}
+  shutdown: graceful
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+  global-config:
+    db-config:
+      logic-delete-field: deletedAt
+      logic-delete-value: NOW()
+      logic-not-delete-value: "null"
+
+# 厂商 adapter 切换 · mock/tencent_yinsu/heygen/minimax
+wandou:
+  adapter:
+    avatar: ${ADAPTER_AVATAR:mock}
+    voice: ${ADAPTER_VOICE:mock}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    com.wandou: ${LOG_LEVEL:INFO}
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
