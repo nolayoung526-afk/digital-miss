@@ -1,3 +1,5 @@
+'use client';
+
 import { useEditorStore } from '@/store/editor';
 
 export default function SceneDetail() {

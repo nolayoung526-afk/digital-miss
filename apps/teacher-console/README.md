@@ -1,7 +1,7 @@
 # 教研后台(Teacher Console)
 
 > 📅 **启动**:Sprint 2(W3-W4) · 负责人:前端 L1
-> 🛠 **技术栈**:React 18 + Vite + Tailwind + Zustand
+> 🛠 **技术栈**:Next.js 15(App Router) + React 18 + TypeScript + Tailwind + Zustand
 
 ## 功能范围(MVP)
 
@@ -23,13 +23,15 @@ pnpm --filter teacher-console dev
 
 ```
 teacher-console/
-├── index.html
-├── vite.config.ts · tsconfig.json · tailwind / postcss
+├── next.config.ts
+├── tsconfig.json · tailwind.config.mjs · postcss.config.mjs
 ├── src/
-│   ├── main.tsx
-│   ├── App.tsx
-│   ├── pages/
-│   │   └── ScriptEditor.tsx    # 🔥 三栏布局主页
+│   ├── app/                    # Next.js App Router
+│   │   ├── layout.tsx          # 根 layout(服务端组件)
+│   │   ├── page.tsx            # 入口(渲染 ScriptEditor)
+│   │   └── globals.css         # 全局样式
+│   ├── views/
+│   │   └── ScriptEditor.tsx    # 🔥 三栏布局主页("use client")
 │   ├── components/
 │   │   ├── SceneList.tsx       # 左:分镜列表(状态颜色/变体数)
 │   │   ├── SceneDetail.tsx     # 中:课件 + 板书指令 + 话术 + 互动

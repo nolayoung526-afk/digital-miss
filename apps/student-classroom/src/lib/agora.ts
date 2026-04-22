@@ -74,7 +74,12 @@ export class AgoraClient {
   }
 
   async join(opts: JoinOptions) {
-    await this.client.setClientRole(opts.role ?? 'host');
+    // 防 strict-mode 二次调用 / 断线重连期的重复 join
+    const state = this.client.connectionState;
+    if (state === 'CONNECTED' || state === 'CONNECTING' || state === 'RECONNECTING') {
+      return;
+    }
+    // mode: 'rtc' 下所有人平等推流,不需要 setClientRole(它只在 'live' 模式有效)
     await this.client.join(opts.appId, opts.channel, opts.token || null, opts.uid);
 
     if (opts.role !== 'audience') {

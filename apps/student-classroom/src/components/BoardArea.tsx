@@ -1,3 +1,5 @@
+'use client';
+
 import { useClassroomStore } from '@/store/classroom';
 
 /** 板书区 · 真实版本对接 @digital-teacher/board-engine */

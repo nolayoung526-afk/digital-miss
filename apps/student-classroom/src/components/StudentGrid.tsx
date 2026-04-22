@@ -1,3 +1,5 @@
+'use client';
+
 import { useClassroomStore } from '@/store/classroom';
 import clsx from 'clsx';
 
