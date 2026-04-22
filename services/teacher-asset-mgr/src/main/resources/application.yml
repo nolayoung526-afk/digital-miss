@@ -26,11 +26,6 @@ server:
 mybatis-plus:
   configuration:
     map-underscore-to-camel-case: true
-  global-config:
-    db-config:
-      logic-delete-field: deletedAt
-      logic-delete-value: NOW()
-      logic-not-delete-value: "null"
 
 # 厂商 adapter 切换 · mock/tencent_yinsu/heygen/minimax
 wandou:

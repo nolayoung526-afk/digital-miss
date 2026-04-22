@@ -2,7 +2,6 @@ package com.wandou.assetmgr.domain;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
@@ -29,6 +28,6 @@ public class TeacherPersona {
     private String vendorVoiceId;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    @TableLogic
+    /** 软删除字段 · MVP 暂不启用 @TableLogic(TIMESTAMP 类型 MyBatis-Plus 逻辑删除需要额外 handler) */
     private LocalDateTime deletedAt;
 }
