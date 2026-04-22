@@ -1,3 +1,5 @@
+'use client';
+
 import { useClassroomStore } from '@/store/classroom';
 import { AINSMode } from '@/lib/agora';
 import clsx from 'clsx';

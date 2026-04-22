@@ -1,3 +1,5 @@
+'use client';
+
 import SceneList from '@/components/SceneList';
 import SceneDetail from '@/components/SceneDetail';
 import VariantPanel from '@/components/VariantPanel';

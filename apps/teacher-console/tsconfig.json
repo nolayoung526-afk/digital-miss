@@ -1,22 +1,22 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "useDefineForClassFields": true,
-    "lib": ["ES2022", "DOM", "DOM.Iterable"],
-    "module": "ESNext",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": false,
     "skipLibCheck": true,
-    "moduleResolution": "Bundler",
-    "allowImportingTsExtensions": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "react-jsx",
-    "strict": true,
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [{ "name": "next" }],
     "baseUrl": ".",
-    "paths": { "@/*": ["src/*"] },
-    "types": ["vite/client"],
-    "noEmit": true
+    "paths": { "@/*": ["src/*"] }
   },
-  "include": ["src"]
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules"]
 }

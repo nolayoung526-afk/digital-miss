@@ -7,7 +7,7 @@ export interface CreateClassResponse {
   rtcRoom: { roomId: string; tokenTtlSec: number };
 }
 
-const API_BASE = (import.meta.env.VITE_API_BASE as string) ?? '/api';
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? '/api';
 
 async function fetchJson<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(`${API_BASE}${path}`, {

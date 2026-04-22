@@ -45,7 +45,7 @@ jobs:
               - 'infra/**'
               - 'docker-compose.yml'
 
-  # ============ 前端(React / TS)============
+  # ============ 前端(Next.js 15 · TS)============
   frontend:
     needs: changes
     if: needs.changes.outputs.frontend == 'true'

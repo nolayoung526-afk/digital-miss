@@ -94,10 +94,10 @@ MVP 阶段全部用 Java 起步,如压测出现瓶颈再切 Go。
 | parent-app | 移动优先 · Capacitor 打包 iOS/Android |
 
 **共用基础**:
-- Vite 5 · TypeScript 5.6 · Tailwind CSS 3.x
-- 路由:TanStack Router
-- 数据:TanStack Query + Zustand
-- 国际化:react-i18next(为国际化预留)
+- Next.js 15(App Router)· React 18 · TypeScript 5.6 · Tailwind CSS 3.x
+- 路由:Next.js App Router(文件系统路由)
+- 数据:TanStack Query + Zustand(client components)· Server Components 按需
+- 国际化:next-intl(为国际化预留)
 - UI:shadcn/ui + Radix Primitives
 
 ## 三、数据层

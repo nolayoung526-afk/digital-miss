@@ -1,7 +1,7 @@
 # 学员课堂(Student Classroom)
 
 > 📅 **启动**:Sprint 1(W1-W2) · 负责人:前端 L2
-> 🛠 **技术栈**:React 18 + TypeScript + Vite 5 + Tailwind 3 + 声网 Web SDK 4
+> 🛠 **技术栈**:Next.js 15(App Router) + React 18 + TypeScript + Tailwind 3 + 声网 Web SDK 4
 
 ## 功能范围
 
@@ -31,17 +31,18 @@ pnpm --filter student-classroom dev       # 启动
 
 ```
 student-classroom/
-├── index.html
-├── vite.config.ts
+├── next.config.ts
 ├── tsconfig.json
-├── tailwind.config.js
-├── postcss.config.js
+├── tailwind.config.mjs
+├── postcss.config.mjs
 ├── .env.example
 ├── src/
-│   ├── main.tsx                 # 入口
-│   ├── App.tsx                  # 路由(MVP 单页)
-│   ├── pages/
-│   │   └── Classroom.tsx        # 🔥 主课堂页
+│   ├── app/                     # 🆕 Next.js App Router
+│   │   ├── layout.tsx           # 根 layout(服务端组件)
+│   │   ├── page.tsx             # 入口(渲染 Classroom)
+│   │   └── globals.css          # 全局样式
+│   ├── views/
+│   │   └── Classroom.tsx        # 🔥 主课堂页("use client")
 │   ├── components/
 │   │   ├── DigitalTeacherView.tsx   # 数字人主画面(+AI 标识)
 │   │   ├── StudentGrid.tsx      # 学员九宫格
@@ -51,10 +52,8 @@ student-classroom/
 │   ├── lib/
 │   │   ├── agora.ts             # 声网 SDK 封装(AgoraClient)
 │   │   └── api.ts               # class-orchestrator HTTP 调用
-│   ├── store/
-│   │   └── classroom.ts         # Zustand 全局状态
-│   └── styles/
-│       └── index.css
+│   └── store/
+│       └── classroom.ts         # Zustand 全局状态
 ```
 
 ## 📌 当前状态
@@ -74,8 +73,8 @@ student-classroom/
 复制 `.env.example` 为 `.env.local`:
 
 ```
-VITE_AGORA_APP_ID=your_app_id
-VITE_API_BASE=/api
+NEXT_PUBLIC_AGORA_APP_ID=your_app_id
+NEXT_PUBLIC_API_BASE=/api
 ```
 
 Real 模式(接入真实声网)需要你的 Agora AppID。

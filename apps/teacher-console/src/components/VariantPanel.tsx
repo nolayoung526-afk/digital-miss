@@ -1,3 +1,5 @@
+'use client';
+
 import { useEditorStore, Variant } from '@/store/editor';
 import clsx from 'clsx';
 

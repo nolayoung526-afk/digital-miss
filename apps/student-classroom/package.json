@@ -2,32 +2,33 @@
   "name": "student-classroom",
   "version": "0.1.0",
   "private": true,
-  "type": "module",
-  "description": "学员课堂端 · React + Vite + 声网 Web SDK",
+  "description": "学员课堂 · Next.js 15 + 声网 Web SDK",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
-    "preview": "vite preview",
-    "lint": "eslint . --ext ts,tsx",
-    "typecheck": "tsc -b --noEmit"
+    "dev": "next dev --port 5174",
+    "build": "next build",
+    "start": "next start --port 5174",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@digital-teacher/shared-types": "workspace:*",
     "agora-rtc-sdk-ng": "^4.22.0",
     "agora-extension-ai-denoiser": "^2.0.1",
     "clsx": "^2.1.1",
+    "next": "^15.0.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "zustand": "^5.0.0"
   },
   "devDependencies": {
+    "@types/node": "^22.0.0",
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.3.1",
-    "@vitejs/plugin-react": "^4.3.3",
     "autoprefixer": "^10.4.20",
+    "eslint": "^9.10.0",
+    "eslint-config-next": "^15.0.3",
     "postcss": "^8.4.47",
     "tailwindcss": "^3.4.14",
-    "typescript": "^5.6.0",
-    "vite": "^5.4.0"
+    "typescript": "^5.6.0"
   }
 }

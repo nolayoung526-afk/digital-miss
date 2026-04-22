@@ -1,3 +1,5 @@
+'use client';
+
 import { useClassroomStore } from '@/store/classroom';
 
 const STATE_COLORS = {

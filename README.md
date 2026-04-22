@@ -17,7 +17,7 @@
 
 | 层 | 技术 | 理由 |
 |---|---|---|
-| **前端** | React 18 + TypeScript + Vite | 生态成熟,团队熟悉 |
+| **前端** | Next.js 15 (App Router) + React 18 + TypeScript | SSR/ISR · 文件路由 · API Routes 后续可用 |
 | UI 库 | Tailwind CSS + shadcn/ui | 原型已使用,样式一致 |
 | 状态 | Zustand(轻)/ TanStack Query(服务端) | 避免 Redux 模板代码 |
 | **后端(主力)** | Java 21 + Spring Boot 3.x | 业务编排 / Orchestrator / Fallback |

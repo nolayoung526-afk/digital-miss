@@ -1,3 +1,5 @@
+'use client';
+
 import { useEffect } from 'react';
 import DigitalTeacherView from '@/components/DigitalTeacherView';
 import StudentGrid from '@/components/StudentGrid';
