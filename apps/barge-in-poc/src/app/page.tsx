@@ -85,12 +85,33 @@ export default function BargeInPoc() {
     const displayText = text.substring(startOffset);
     if (!displayText) { onEnd?.(); return; }
 
+    // 诊断 · 浏览器 TTS 可用性
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
+      log('❌ 浏览器不支持 speechSynthesis', 'text-red-400');
+      return;
+    }
+    const voices = speechSynthesis.getVoices();
+    if (voices.length === 0) {
+      log('⚠ TTS voices 未加载 · 等 200ms 再试', 'text-amber-400');
+      setTimeout(() => speak(text, startOffset, onEnd), 200);
+      return;
+    }
+
     const u = new SpeechSynthesisUtterance(displayText);
     u.lang = 'zh-CN';
     u.rate = 0.95;
     u.pitch = 1.1;
-    const zh = speechSynthesis.getVoices().find((v) => v.lang.startsWith('zh'));
-    if (zh) u.voice = zh;
+    const zh = voices.find((v) => v.lang.startsWith('zh'));
+    if (zh) {
+      u.voice = zh;
+      log(`🔊 TTS 调用 · voice=${zh.name} · ${displayText.length} 字`, 'text-sky-400');
+    } else {
+      log(`⚠ 无中文 voice · fallback 到默认(会听到英文/机械音)`, 'text-amber-400');
+    }
+
+    u.onerror = (ev) => {
+      log(`❌ TTS error: ${ev.error}`, 'text-red-400');
+    };
 
     u.onstart = () => {
       log(`🔊 TTS 开始 · char_offset=${startOffset}`, 'text-emerald-400');
@@ -308,7 +329,29 @@ export default function BargeInPoc() {
       `   VAD阈值=${BARGEIN_DEFAULTS.vad_threshold_dbfs}dBFS · 最小持续=${BARGEIN_DEFAULTS.min_speech_ms}ms · 静默结束=${BARGEIN_DEFAULTS.silence_end_ms}ms`,
       'text-slate-400'
     );
-    return () => { stopMic(); };
+
+    // 预热 TTS voices(Chrome 首次加载异步)
+    const reportVoices = () => {
+      const all = speechSynthesis.getVoices();
+      const zh = all.filter((v) => v.lang.startsWith('zh'));
+      if (all.length === 0) {
+        log('⚠ 浏览器还未加载 TTS voices', 'text-amber-400');
+      } else if (zh.length === 0) {
+        log(
+          `⚠ 无中文 voice(共 ${all.length} 个 · 无 zh-*)· macOS 设置 → 辅助功能 → 朗读内容 → 添加中文语音`,
+          'text-amber-400'
+        );
+      } else {
+        log(`✅ TTS voices 就绪 · 中文 ${zh.length} 个(${zh.slice(0, 2).map((v) => v.name).join(', ')}${zh.length > 2 ? '...' : ''})`, 'text-emerald-400');
+      }
+    };
+    reportVoices();
+    speechSynthesis.addEventListener('voiceschanged', reportVoices);
+
+    return () => {
+      speechSynthesis.removeEventListener('voiceschanged', reportVoices);
+      stopMic();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
