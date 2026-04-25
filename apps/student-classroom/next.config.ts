@@ -5,10 +5,11 @@ const nextConfig: NextConfig = {
   // 生产构建不受影响 · 如需排查 deprecation 再开
   reactStrictMode: false,
   // 后端代理 · 对接 class-orchestrator
+  // 注意:/api/rtc/* 留给本地 Next.js API route(本地自签 Token,免起 Java 后端)
   async rewrites() {
     return [
       {
-        source: '/api/:path*',
+        source: '/api/:path((?!v1/rtc/).+)',
         destination: `${process.env.API_BASE ?? 'http://localhost:8081'}/api/:path*`,
       },
     ];

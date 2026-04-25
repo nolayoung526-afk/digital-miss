@@ -17,27 +17,49 @@ export default function Classroom() {
   const [rtcError, setRtcError] = useState<string>('');
   const [remotes, setRemotes] = useState<RemoteMedia[]>([]);
 
-  // 真实 RTC 连接 · 只在 AppID + Token 都配齐时触发
+  // 真实 RTC 连接:启动时 POST /api/v1/rtc/token 换动态 Token
   // 动态 import 避免 Agora SDK 在 SSR 时访问 window
   useEffect(() => {
-    const appId = process.env.NEXT_PUBLIC_AGORA_APP_ID;
-    const token = process.env.NEXT_PUBLIC_AGORA_TEMP_TOKEN;
     const channel = process.env.NEXT_PUBLIC_AGORA_CHANNEL || 'demo_classroom';
-    if (!appId || !token) {
-      setRtcStatus('mock');
-      return;
-    }
+    const envAppId = process.env.NEXT_PUBLIC_AGORA_APP_ID;
+    const envToken = process.env.NEXT_PUBLIC_AGORA_TEMP_TOKEN;
+    const uid = `stu_${Math.floor(Math.random() * 10000)}`;
+
     setRtcStatus('joining');
     let cleanup: (() => void) | undefined;
     let cancelled = false;
+
+    const fetchToken = async (): Promise<{ appId: string; token: string } | null> => {
+      try {
+        const r = await fetch('/api/v1/rtc/token', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ channel, uid, role: 'host' }),
+        });
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        const json = await r.json();
+        const data = json.data ?? json;
+        return { appId: data.appId, token: data.token };
+      } catch (e) {
+        console.warn('[Agora] backend token fetch failed · fallback env', e);
+        if (envAppId && envToken) return { appId: envAppId, token: envToken };
+        return null;
+      }
+    };
+
     (async () => {
+      const creds = await fetchToken();
+      if (cancelled) return;
+      if (!creds) {
+        setRtcStatus('mock');
+        return;
+      }
       try {
         const { getAgoraClient } = await import('@/lib/agora');
         if (cancelled) return;
         const client = getAgoraClient();
         const off = client.onRemoteChange(setRemotes);
-        const uid = `stu_${Math.floor(Math.random() * 10000)}`;
-        await client.join({ appId, token, channel, uid, role: 'host' });
+        await client.join({ appId: creds.appId, token: creds.token, channel, uid, role: 'host' });
         if (cancelled) {
           off();
           await client.leave().catch(() => undefined);
