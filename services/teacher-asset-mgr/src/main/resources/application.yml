@@ -9,6 +9,12 @@ spring:
     default-property-inclusion: non_null
     date-format: yyyy-MM-dd'T'HH:mm:ss.SSSXXX
 
+  # multipart 上传大小 · 默认 1MB 太小
+  servlet:
+    multipart:
+      max-file-size: 60MB
+      max-request-size: 60MB
+
   # MySQL(生产)· 测试走 H2 in-memory
   datasource:
     url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/${MYSQL_DB:digital_teacher}?useSSL=false&serverTimezone=Asia/Shanghai&characterEncoding=utf8mb4&allowPublicKeyRetrieval=true
@@ -32,6 +38,11 @@ wandou:
   adapter:
     avatar: ${ADAPTER_AVATAR:mock}
     voice: ${ADAPTER_VOICE:mock}
+  asset-storage:
+    type: ${ASSET_STORAGE_TYPE:local}
+    local-root: ${ASSET_LOCAL_ROOT:./assets/personas}
+    url-prefix: ${ASSET_URL_PREFIX:/assets}
+    max-file-size-mb: 50
 
 management:
   endpoints:

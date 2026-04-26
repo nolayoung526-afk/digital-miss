@@ -41,3 +41,6 @@ venv/
 # Runtime
 .cache/
 tmp/
+
+# Persona 素材(本地上传存储 · 不入仓库)
+assets/
