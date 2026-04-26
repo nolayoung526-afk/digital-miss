@@ -17,6 +17,11 @@ wandou:
   adapter:
     avatar: mock
     voice: mock
+  asset-storage:
+    type: local
+    local-root: ./target/test-assets
+    url-prefix: /assets
+    max-file-size-mb: 50
 
 logging:
   level:
