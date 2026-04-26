@@ -96,11 +96,15 @@ public class LocalAssetStorageService {
         return i < 0 ? "" : name.substring(i + 1);
     }
 
-    /** 保留扩展名,身体部分替换为安全字符 */
+    /** 保留扩展名,身体部分替换为安全字符 · 不允许任何点(防 ..)和路径分隔符 */
     private String sanitizeFilename(String name, String ext) {
-        if (name == null) return "file." + ext;
-        String base = name.lastIndexOf('.') > 0 ? name.substring(0, name.lastIndexOf('.')) : name;
-        String safe = base.replaceAll("[^a-zA-Z0-9._\\-\\u4e00-\\u9fa5]", "_");
+        if (name == null) return "file." + ext.toLowerCase();
+        int lastDot = name.lastIndexOf('.');
+        String base = lastDot > 0 ? name.substring(0, lastDot) : name;
+        // 一次性把所有非安全字符(含点、斜杠、冒号、空格等)替成 _
+        String safe = base.replaceAll("[^a-zA-Z0-9_\\-\\u4e00-\\u9fa5]", "_");
+        // 折叠连续下划线 + trim
+        safe = safe.replaceAll("_+", "_").replaceAll("^_+|_+$", "");
         if (safe.isBlank()) safe = "file";
         return safe + "." + ext.toLowerCase();
     }
