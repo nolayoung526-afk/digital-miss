@@ -15,6 +15,7 @@ dependencies = [
     "aiokafka>=0.11.0",
     "structlog>=24.4.0",
     "numpy>=2.0.0",
+    "replicate>=0.34.0",
     # 生产环境按需安装:
     #   torch / onnxruntime-gpu
     #   agora-python-server-sdk(私有制品)
@@ -37,7 +38,7 @@ requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
-packages = ["app", "app.api", "app.models", "app.services"]
+packages = ["app", "app.adapters", "app.api", "app.models", "app.services"]
 
 [tool.ruff]
 line-length = 100
